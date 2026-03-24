@@ -1,0 +1,5 @@
+_target_: sklearn.ensemble.GradientBoostingClassifier
+n_estimators: 200
+max_depth: 5
+learning_rate: 0.1
+random_state: 42

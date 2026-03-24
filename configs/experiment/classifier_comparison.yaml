@@ -1,0 +1,7 @@
+# Compare classifiers with fixed CNN features
+defaults:
+  - /features: cnn
+  - /reduction: none
+
+sweep:
+  model: [knn, logistic, naive_bayes, perceptron, svm_linear, svm_rbf, decision_tree, random_forest, mlp_sklearn]

@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+*.so
+
+# Virtual Environments
+.env
+.venv/
+env/
+
+# Data (large files)
+data/food-101/
+data/images/
+data/meta/
+data/cache/
+*.h5
+*.hdf5
+*.tar.gz
+*.zip
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Experiment outputs (keep results/ tracked)
+outputs/
+multirun/
+wandb/
+
+# Slurm
+slurm-*.out
+*.slurm
+slurm/
+
+# Misc
+*.log

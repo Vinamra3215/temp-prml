@@ -1,0 +1,4 @@
+_target_: sklearn.neighbors.KNeighborsClassifier
+n_neighbors: 5
+weights: distance
+metric: euclidean

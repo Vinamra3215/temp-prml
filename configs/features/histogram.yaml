@@ -1,0 +1,3 @@
+_target_: src.features.histogram.ColorHistogramExtractor
+bins: 32
+color_spaces: [rgb, hsv]

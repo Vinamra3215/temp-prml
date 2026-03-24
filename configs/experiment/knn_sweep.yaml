@@ -1,0 +1,10 @@
+# kNN hyperparameter sweep
+defaults:
+  - /model: knn
+
+optuna:
+  n_trials: 30
+  search_space:
+    n_neighbors: [1, 3, 5, 7, 10, 15, 21]
+    metric: [euclidean, manhattan, cosine]
+    weights: [uniform, distance]

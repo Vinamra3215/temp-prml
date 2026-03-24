@@ -1,0 +1,7 @@
+# Compare features with fixed SVM-RBF model
+defaults:
+  - /model: svm_rbf
+
+sweep:
+  features: [histogram, hog, cnn, fused]
+  reduction: [none]

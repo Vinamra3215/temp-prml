@@ -1,0 +1,9 @@
+# SVM hyperparameter sweep
+defaults:
+  - /model: svm_rbf
+
+optuna:
+  n_trials: 50
+  search_space:
+    C: {type: float, low: 0.01, high: 100, log: true}
+    gamma: [scale, auto]

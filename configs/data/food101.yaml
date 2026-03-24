@@ -1,0 +1,6 @@
+root: data/
+name: food101
+n_classes: 20
+image_size: 224
+test_split: 0.2
+val_split: 0.15

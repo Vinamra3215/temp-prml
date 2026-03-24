@@ -1,0 +1,23 @@
+stages:
+  extract_features:
+    cmd: python scripts/extract_features.py
+    deps:
+      - src/features/
+      - data/food-101/
+    outs:
+      - data/cache/
+
+  run_experiments:
+    cmd: python scripts/run_experiment.py --model svm_rbf --features cnn
+    deps:
+      - data/cache/
+      - configs/
+    outs:
+      - results/metrics/master.csv
+
+  generate_plots:
+    cmd: python scripts/generate_report_plots.py
+    deps:
+      - results/metrics/master.csv
+    outs:
+      - results/plots/

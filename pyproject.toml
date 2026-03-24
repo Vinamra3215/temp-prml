@@ -1,0 +1,16 @@
+[project]
+name = "food-prml"
+version = "0.1.0"
+description = "Food Image Classification - A Comparative Study of PRML Techniques"
+requires-python = ">=3.10"
+readme = "README.md"
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+line-length = 100

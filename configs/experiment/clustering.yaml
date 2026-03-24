@@ -1,0 +1,10 @@
+# Clustering experiments
+algorithms:
+  - name: kmeans
+    params: {n_clusters: 20, init: k-means++, n_init: 10}
+  - name: gmm
+    params: {n_components: 20, covariance_type: diagonal}
+  - name: agglomerative
+    params: {n_clusters: 20, linkage: ward}
+
+features_to_test: [raw, handcrafted, cnn]

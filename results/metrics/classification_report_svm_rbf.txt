@@ -1,0 +1,28 @@
+Classification Report — svm_rbf (CNN features)
+============================================================
+                      precision    recall  f1-score   support
+
+      beef_carpaccio       0.78      0.78      0.78       250
+        beef_tartare       0.77      0.75      0.76       250
+        caesar_salad       0.89      0.88      0.89       250
+       caprese_salad       0.78      0.75      0.77       250
+         carrot_cake       0.85      0.74      0.79       250
+          cheesecake       0.63      0.62      0.62       250
+        creme_brulee       0.90      0.87      0.89       250
+       croque_madame       0.85      0.87      0.86       250
+           cup_cakes       0.59      0.92      0.72       250
+              donuts       0.84      0.84      0.84       250
+           escargots       0.90      0.86      0.88       250
+   hot_and_sour_soup       0.92      0.90      0.91       250
+           miso_soup       0.93      0.86      0.89       250
+             oysters       0.95      0.88      0.91       250
+              paella       0.93      0.86      0.89       250
+                 pho       0.85      0.89      0.87       250
+           pork_chop       0.83      0.88      0.85       250
+               ramen       0.86      0.80      0.83       250
+             sashimi       0.91      0.88      0.89       250
+strawberry_shortcake       0.82      0.81      0.81       250
+
+            accuracy                           0.83      5000
+           macro avg       0.84      0.83      0.83      5000
+        weighted avg       0.84      0.83      0.83      5000

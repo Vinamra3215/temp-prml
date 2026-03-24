@@ -1,0 +1,7 @@
+# Compare dimensionality reduction methods
+defaults:
+  - /model: svm_rbf
+  - /features: fused
+
+sweep:
+  reduction: [none, pca, lda]

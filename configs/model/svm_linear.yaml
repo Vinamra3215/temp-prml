@@ -1,0 +1,5 @@
+_target_: sklearn.svm.SVC
+kernel: linear
+C: 1.0
+probability: true
+random_state: 42

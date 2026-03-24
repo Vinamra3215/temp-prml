@@ -1,0 +1,30 @@
+name: food-prml
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pytorch=2.2.0
+  - torchvision
+  - pytorch-lightning=2.2.0
+  - pip:
+    - timm==0.9.16
+    - wandb
+    - hydra-core==1.3.2
+    - optuna==3.5.0
+    - scikit-learn==1.4.0
+    - scikit-image
+    - umap-learn
+    - shap
+    - plotly
+    - yellowbrick
+    - albumentations
+    - h5py
+    - dvc
+    - streamlit
+    - grad-cam
+    - joblib
+    - tqdm
+    - seaborn
+    - pandas

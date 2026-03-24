@@ -1,0 +1,23 @@
+defaults:
+  - data: food101
+  - features: cnn
+  - reduction: none
+  - model: svm_rbf
+  - _self_
+
+seed: 42
+cv_folds: 5
+n_classes: 20
+log_wandb: true
+save_results: true
+
+wandb:
+  project: food-prml
+  entity: null
+
+paths:
+  data_root: data/
+  cache_dir: data/cache/
+  results_dir: results/
+  plots_dir: results/plots/
+  metrics_dir: results/metrics/
