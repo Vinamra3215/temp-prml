@@ -1,275 +1,314 @@
 # 🍕 Food Image Classification — PRML Project
 
-> **A Comparative Study of Classical and Modern PRML Techniques for Food Image Classification**
+End-to-end machine learning pipeline for classifying food images from 20 categories of the [Food-101 dataset](https://www.kaggle.com/datasets/dansbecker/food-101).
 
-This project implements a complete machine learning pipeline for food image classification using the [Food-101 dataset](https://www.kaggle.com/datasets/kmader/food41), covering **27 course topics** from Pattern Recognition and Machine Learning.
-
----
-
-## 📊 Results Summary
-
-| Rank | Model | Features | Test Accuracy | Test F1 |
-|------|-------|----------|:------------:|:-------:|
-| 🥇 | **Logistic Regression** | CNN (ResNet-50) | **84.78%** | **84.79%** |
-| 🥈 | MLP (sklearn) | CNN (ResNet-50) | 84.68% | 84.63% |
-| 🥉 | SVM (Linear) | CNN (ResNet-50) | 84.50% | 84.51% |
-| 4 | SVM (RBF) | CNN (ResNet-50) | 83.12% | 83.29% |
-| 5 | Perceptron | CNN (ResNet-50) | 78.58% | 78.57% |
-| 6 | Random Forest | CNN (ResNet-50) | 77.52% | 77.28% |
-| 7 | Gradient Boosting | CNN + PCA | 73.14% | 73.14% |
-| 8 | kNN (k=5) | CNN (ResNet-50) | 66.70% | 66.67% |
-| 9 | Naive Bayes | CNN (ResNet-50) | 61.70% | 61.37% |
-| 10 | Decision Tree | CNN (ResNet-50) | 51.70% | 51.65% |
-| 11 | SVM (RBF) | Fused + PCA | 30.50% | 30.38% |
-| 12 | SVM (RBF) | HOG + PCA | 28.50% | 28.38% |
-| 13 | SVM (RBF) | Color Histogram | 28.30% | 27.66% |
-
-### Key Findings
-- **CNN features dominate** handcrafted features by a factor of ~3× in accuracy
-- **Logistic Regression** on CNN embeddings achieves the best accuracy (84.78%) with the fastest training time (8.9s)
-- **Cross-validation vs test accuracy** shows good generalization across all CNN-based models
+**No pretrained models** — uses only classical ML algorithms and handcrafted feature extraction, covering core PRML course topics including dimensionality reduction, kernel methods, density estimation, and neural networks.
 
 ---
 
-## 🏗️ Project Architecture
+## 📊 Project Highlights
+
+| Aspect | Detail |
+|--------|--------|
+| **Dataset** | Food-101 (20 classes, ~15K images) |
+| **Features** | Color Histogram, HOG, LBP, GLCM, Fused |
+| **Models** | KNN, Logistic Regression, Naive Bayes, Decision Tree, Gradient Boosting, Perceptron, MLP, KDE (Parzen Window) |
+| **Hyperparameters** | Selected via **GridSearchCV** (not hardcoded) |
+| **Dimensionality Reduction** | PCA (200 components) |
+| **Experiment Tracking** | Local CSV + optional Weights & Biases |
+| **Optimization** | Optuna (Bayesian / TPE sampler) |
+
+---
+
+## 🏗 Architecture
 
 ```
 project/
-├── configs/                    # Hydra YAML configuration files
-│   ├── config.yaml             #   Master config
-│   ├── data/                   #   Dataset configs (food101_20, food101_50)
-│   ├── features/               #   Feature extractor configs
-│   ├── model/                  #   Model hyperparameter configs
-│   ├── reduction/              #   PCA/LDA configs
-│   └── experiment/             #   Predefined experiment combos
+├── configs/                    # Hydra YAML configurations
+│   ├── model/                  # Per-model configs (knn, logistic, kde, etc.)
+│   └── experiment/             # Experiment sweep configs
 │
-├── src/                        # Source code
-│   ├── data/                   #   Dataset loading, preprocessing, caching
-│   │   ├── dataset.py          #     Food-101 loader with stratified splits
-│   │   ├── preprocess.py       #     Image transforms & augmentation
-│   │   └── cache.py            #     HDF5 feature matrix caching
-│   │
-│   ├── features/               #   Feature extraction
-│   │   ├── base.py             #     Abstract base with parallel extraction
-│   │   ├── histogram.py        #     RGB + HSV color histograms
-│   │   ├── hog.py              #     Histogram of Oriented Gradients
-│   │   ├── lbp.py              #     Local Binary Patterns
-│   │   ├── glcm.py             #     Gray-Level Co-occurrence Matrix
-│   │   ├── cnn_embeddings.py   #     ResNet-50 pretrained embeddings
-│   │   └── fusion.py           #     Multi-feature concatenation
-│   │
-│   ├── reduction/              #   Dimensionality reduction
-│   │   ├── pca_reducer.py      #     PCA with scree plots
-│   │   └── lda_reducer.py      #     LDA with 2D projections
-│   │
-│   ├── models/                 #   Classifiers
-│   │   ├── registry.py         #     Unified Pipeline builder (Scaler → Reducer → Clf)
-│   │   ├── classical.py        #     16 classical ML models
-│   │   ├── mlp.py              #     MLP (sklearn + PyTorch)
-│   │   └── cnn/                #     CNN with transfer learning (Lightning)
-│   │       ├── model.py        #       Custom CNN + pretrained backbone
-│   │       ├── datamodule.py   #       Lightning DataModule
-│   │       └── callbacks.py    #       Early stopping
-│   │
-│   ├── clustering/             #   Unsupervised learning
-│   │   ├── kmeans.py           #     KMeans + elbow method
-│   │   ├── agglomerative.py    #     Hierarchical + dendrograms
-│   │   └── gmm.py              #     GMM + BIC/AIC selection
-│   │
-│   ├── evaluation/             #   Metrics and validation
-│   │   ├── metrics.py          #     Accuracy, F1, precision, recall, top-5
-│   │   ├── cross_val.py        #     Stratified 5-Fold CV + learning curves
-│   │   └── comparison.py       #     Master CSV result tracking
-│   │
-│   ├── visualization/          #   Plots and analysis
-│   │   ├── confusion_plot.py   #     Confusion matrix heatmaps
-│   │   ├── learning_curves.py  #     k-vs-accuracy, training history
-│   │   ├── filter_demo.py      #     Convolution filter visualization
-│   │   ├── umap_plot.py        #     Interactive UMAP scatter
-│   │   ├── gradcam.py          #     Grad-CAM CNN interpretability
-│   │   └── shap_analysis.py    #     SHAP feature importance
-│   │
-│   ├── experiment/             #   Experiment orchestration
-│   │   ├── runner.py           #     Single experiment runner
-│   │   ├── sweeper.py          #     Optuna hyperparameter search
-│   │   └── clustering_runner.py#     Clustering experiment runner
-│   │
-│   └── utils/                  #   Utilities
-│       ├── seed.py             #     Global seed for reproducibility
-│       ├── logging.py          #     Logging + wandb init
-│       └── io.py               #     File I/O helpers
+├── scripts/                    # Entry points
+│   ├── extract_features.py     # Cache all handcrafted features (HDF5)
+│   ├── run_all_experiments.py  # ★ Main pipeline: 4 phases, GridSearchCV
+│   ├── run_experiment.py       # Single model experiment
+│   ├── run_sweep.py            # Optuna hyperparameter sweep
+│   └── generate_report_plots.py # Generate 8 presentation plots
 │
-├── scripts/                    # Entry-point scripts
-│   ├── extract_features.py     #   Precompute & cache all feature matrices
-│   ├── run_experiment.py       #   Run single classifier experiment
-│   ├── run_sweep.py            #   Launch Optuna hyperparameter sweep
-│   ├── run_clustering.py       #   Run clustering experiments
-│   ├── run_cnn.py              #   Fine-tune CNN with Lightning
-│   └── generate_report_plots.py#   Regenerate all plots from saved results
+├── src/
+│   ├── data/
+│   │   ├── dataset.py          # Food101Dataset (Kaggle folder layout)
+│   │   └── cache.py            # HDF5 feature caching
+│   │
+│   ├── features/               # Feature extractors
+│   │   ├── histogram.py        # Color histogram (HSV, 32 bins)
+│   │   ├── hog.py              # Histogram of Oriented Gradients
+│   │   ├── lbp.py              # Local Binary Patterns
+│   │   ├── glcm.py             # Gray-Level Co-occurrence Matrix
+│   │   └── fusion.py           # Fused multi-feature vector
+│   │
+│   ├── models/
+│   │   ├── registry.py         # Model + reducer registry, PARAM_GRIDS
+│   │   └── classical.py        # Classical models + KDEClassifier
+│   │
+│   ├── evaluation/
+│   │   ├── metrics.py          # Accuracy, F1, precision, recall
+│   │   ├── cross_val.py        # Stratified K-Fold CV
+│   │   └── comparison.py       # Master CSV result logger
+│   │
+│   ├── experiment/
+│   │   ├── runner.py           # Core runner with GridSearchCV + W&B
+│   │   └── sweeper.py          # Optuna sweep with per-model search spaces
+│   │
+│   ├── analysis/
+│   │   └── model_insights.py   # Confusion analysis, auto summary, ranking
+│   │
+│   ├── reduction/
+│   │   └── pca_analysis.py     # PCA variance analysis
+│   │
+│   └── utils/
+│       ├── seed.py             # Reproducibility (numpy, sklearn)
+│       └── logging.py          # W&B integration + CSV experiment log
 │
-├── results/                    # Generated outputs
-│   ├── metrics/                #   CSVs, reports, comparison tables
-│   └── plots/                  #   All generated visualizations
+├── results/
+│   ├── plots/                  # 8 curated analysis plots
+│   └── metrics/                # CSV results, sweep JSONs, summaries
 │
 ├── tests/                      # Unit tests
-├── app/                        # Streamlit demo app
-├── notebooks/                  # Jupyter analysis notebooks
-├── environment.yml             # Conda environment
-├── pyproject.toml              # Project metadata
-├── dvc.yaml                    # DVC pipeline definition
-└── .gitignore
+├── notebooks/                  # Jupyter exploration notebooks
+└── app/                        # Streamlit demo app
 ```
 
 ---
 
-## 🔧 Setup & Installation
+## 🚀 Quick Start
 
-### 1. Clone and Setup Environment
+### 1. Setup Environment
+
 ```bash
-git clone https://github.com/Vinamra3215/temp-prml.git
-cd temp-prml
-
-# Create conda environment
 conda env create -f environment.yml
 conda activate food-prml
 ```
 
-### 2. Download Dataset
-Download the [Food-101 dataset from Kaggle](https://www.kaggle.com/datasets/kmader/food41) and extract the `images/` and `meta/` folders into `data/`:
+### 2. Prepare Data
+
+Download [Food-101 from Kaggle](https://www.kaggle.com/datasets/dansbecker/food-101) and extract to:
 ```
 data/
 ├── images/
 │   ├── apple_pie/
 │   ├── baby_back_ribs/
-│   └── ... (101 categories)
+│   └── ...
 └── meta/
     └── meta/
-        ├── classes.txt
         ├── train.json
         └── test.json
 ```
 
-### 3. Extract Features (Run Once)
+### 3. Extract Features
+
 ```bash
 python scripts/extract_features.py
 ```
-This caches all feature matrices (histogram, HOG, LBP, GLCM, fused, CNN) as HDF5 files in `data/cache/`.
 
----
+Extracts 5 feature types (Histogram, HOG, LBP, GLCM, Fused) and caches as HDF5 files in `data/cache/`.
 
-## 🚀 Running Experiments
+### 4. Run All Experiments
 
-### Single Experiment
 ```bash
-# Run SVM with CNN features
-python scripts/run_experiment.py --model svm_rbf --features cnn
+# Full pipeline — all 4 phases
+python scripts/run_all_experiments.py
 
-# Run Logistic Regression with CNN features
-python scripts/run_experiment.py --model logistic --features cnn
+# With Weights & Biases tracking
+python scripts/run_all_experiments.py --wandb
 
-# Run with PCA reduction
-python scripts/run_experiment.py --model svm_rbf --features cnn --reducer pca
+# Run specific phase only
+python scripts/run_all_experiments.py --phase 1   # Table 1: No PCA
+python scripts/run_all_experiments.py --phase 2   # Table 2: PCA-200
+python scripts/run_all_experiments.py --phase 3   # MLP loss curve
+python scripts/run_all_experiments.py --phase 4   # Auto summary
 ```
 
-### Available Models
-`knn`, `logistic`, `naive_bayes`, `svm_linear`, `svm_rbf`, `decision_tree`, `random_forest`, `mlp_sklearn`, `perceptron`, `sgd`, `gradient_boosting`
+### 5. Generate Report Plots
 
-### Available Features
-`histogram`, `hog`, `lbp`, `glcm`, `fused`, `cnn`
-
-### Hyperparameter Sweep (Optuna)
-```bash
-python scripts/run_sweep.py --model svm_rbf --features cnn --n-trials 30
-```
-
-### Clustering Experiments
-```bash
-python scripts/run_clustering.py --features cnn
-```
-
-### CNN Fine-tuning
-```bash
-python scripts/run_cnn.py --backbone resnet50 --epochs 20
-```
-
-### Generate All Plots
 ```bash
 python scripts/generate_report_plots.py
 ```
 
 ---
 
-## 📈 Generated Outputs
+## 🧪 Experiment Pipeline
 
-### Plots (`results/plots/`)
-| Plot | Description |
-|------|-------------|
-| `model_comparison.png` | Bar chart comparing all models by test accuracy |
-| `feature_comparison.png` | Best accuracy per feature type |
-| `accuracy_vs_f1.png` | Scatter of accuracy vs F1 score |
-| `runtime_comparison.png` | Training time comparison |
-| `confusion_logistic.png` | Confusion matrix for best model |
-| `confusion_svm_rbf.png` | Confusion matrix for SVM RBF |
-| `confusion_random_forest.png` | Confusion matrix for Random Forest |
-| `pca_explained_variance.png` | PCA scree plot on CNN features |
-| `cv_vs_test_accuracy.png` | Overfitting analysis (CV vs test) |
+The pipeline runs in **4 phases**:
 
-### Metrics (`results/metrics/`)
-| File | Description |
-|------|-------------|
-| `master.csv` | All experiment results (appended per run) |
-| `comparison_table.csv` | Formatted comparison table |
-| `comparison_results.md` | Markdown summary with key findings |
-| `classification_report_*.txt` | Per-class precision/recall/F1 |
+### Phase 1 — No PCA (Raw Dimensions)
+All 8 models × 5 feature types = **40 experiments**
+- Hyperparameters selected via **GridSearchCV** (5-fold CV, F1 macro scoring)
+- Results saved to `master_no_pca.csv`
+
+### Phase 2 — With PCA (200 Components)
+Same 40 experiments with PCA dimensionality reduction applied uniformly
+- Fair comparison: all models see the same 200-dimensional input
+- Results saved to `master_with_pca.csv`
+
+### Phase 3 — MLP Training Loss Curve
+- Trains MLP (512→256 hidden units) on fused features
+- Records per-epoch training and validation loss
+- Saves to `cnn_history.json`
+
+### Phase 4 — Auto Summary
+- Generates text summary with best model, feature analysis, efficiency metrics
+- Saves to `summary_*.txt`
 
 ---
 
-## 📚 Course Topics Covered (27/27)
+## 🔧 Hyperparameter Tuning
+
+**All hyperparameters are found via GridSearchCV** — nothing is hardcoded.
+
+| Model | Search Space |
+|-------|-------------|
+| **KNN** | k ∈ {1,3,5,7,9,11,15,21}, weights ∈ {uniform, distance}, metric ∈ {euclidean, manhattan} |
+| **Logistic Regression** | C ∈ {0.01, 0.1, 1.0, 10.0} |
+| **Naive Bayes** | var_smoothing ∈ {1e-9, 1e-8, 1e-7, 1e-6} |
+| **Decision Tree** | max_depth ∈ {5,10,20,30,None}, min_samples_split ∈ {2,5,10} |
+| **Gradient Boosting** | n_estimators ∈ {50,100,200}, max_depth ∈ {3,5,7}, lr ∈ {0.01,0.1,0.2} |
+| **MLP** | layers ∈ {(128,),(256,128),(512,256,128)}, activation ∈ {relu, tanh} |
+| **Perceptron** | penalty ∈ {None, l1, l2}, alpha ∈ {1e-4, 1e-3, 1e-2} |
+| **KDE (Parzen)** | bandwidth ∈ {0.1, 0.5, 1.0, 2.0, 5.0}, kernel ∈ {gaussian, tophat, epanechnikov} |
+
+Additionally, **Optuna** (Bayesian optimization with TPE sampler) can be used for deeper sweeps:
+
+```bash
+python scripts/run_sweep.py --model knn --features fused --n-trials 30
+python scripts/run_sweep.py --model logistic --features hog --wandb
+```
+
+---
+
+## 📈 Analysis Plots (8 Total)
+
+| # | Plot | Purpose | Viva Topic |
+|---|------|---------|------------|
+| 1 | `model_comparison.png` | All models ranked by accuracy | Model selection |
+| 2 | `feature_comparison.png` | Best accuracy per feature type | Feature ablation |
+| 3 | `pca_explained_variance.png` | Variance vs PCA components | Dimensionality reduction |
+| 4 | `accuracy_vs_f1.png` | Accuracy-F1 correlation | Metric analysis |
+| 5 | `cv_vs_test_accuracy.png` | Generalization gap | Overfitting / Bias-Variance |
+| 6 | `confusion_best_model.png` | Error patterns for best model | Error analysis |
+| 7 | `runtime_comparison.png` | Computational cost | Efficiency tradeoffs |
+| 8 | `cnn_loss_curve.png` | Training vs validation loss | Neural network convergence |
+
+---
+
+## 🎓 PRML Course Topics Covered
 
 | # | Topic | Implementation |
 |---|-------|---------------|
-| 1 | Probability Review | Naive Bayes, GMM |
-| 2 | Non-parametric Density Estimation | Color histograms, KDE analysis |
-| 3 | Feature Extraction | HOG, LBP, GLCM, histogram, fusion |
-| 4 | Bayesian Classifier | Naive Bayes with Gaussian likelihood |
-| 5 | kNN Classification | kNN with k-tuning, distance metrics |
-| 6 | Distance Metrics | Euclidean, Manhattan, Cosine in kNN |
-| 7 | Cross-validation | Stratified 5-Fold CV |
-| 8 | Bias-Variance Tradeoff | Learning curves, model complexity analysis |
-| 9 | Linear Discriminant | LDA for reduction + classification |
-| 10 | Logistic Regression | Multinomial logistic with L1/L2 |
-| 11 | Regularization | L1, L2 penalty sweeps |
-| 12 | PCA | Eigenface-style reduction, scree plots |
-| 13 | LDA/PCA Comparison | Side-by-side projections |
-| 14 | SVM | Linear, RBF, Polynomial kernels |
-| 15 | Kernel Methods | RBF, Polynomial SVM kernels |
-| 16 | Multiclass SVM | One-vs-Rest classification |
-| 17 | Neural Networks | MLP with backpropagation |
-| 18 | Backpropagation | PyTorch autograd, training loops |
-| 19 | Gradient Descent | SGD, Adam optimizers |
-| 20 | Convolutions | Filter visualization (Sobel, Gabor) |
-| 21 | CNN | ResNet-50 transfer learning, embeddings |
-| 22 | Decision Trees | Gini/entropy splits, depth tuning |
-| 23 | KMeans Clustering | Elbow method, silhouette score |
-| 24 | Hierarchical Clustering | Agglomerative + dendrograms |
-| 25 | Ensemble: Bagging | Random Forest |
-| 26 | Ensemble: Boosting | Gradient Boosting |
-| 27 | Model Selection | Optuna sweeps, CV comparison |
+| 1 | Bayesian Decision Theory | KDE classifier (generative Bayesian model) |
+| 2 | Density Estimation & Parzen Window | `KDEClassifier` with multiple kernels |
+| 3 | Dimensionality Reduction (PCA) | PCA-200 applied uniformly; variance analysis |
+| 4 | Linear Discriminant Analysis | LDA available as reducer in registry |
+| 5 | K-Nearest Neighbors | KNN with GridSearchCV over k, weights, metric |
+| 6 | Naive Bayes Classifier | GaussianNB with variance smoothing tuning |
+| 7 | Logistic Regression | Multinomial logistic with L2 regularization |
+| 8 | Perceptron & Linear Models | Perceptron, SGDClassifier |
+| 9 | Neural Networks (MLP) | MLPClassifier with loss curve tracking |
+| 10 | Decision Trees | Pruned via max_depth, min_samples tuning |
+| 11 | Ensemble Methods | Gradient Boosting (boosting analysis) |
+| 12 | Model Evaluation | Stratified K-Fold CV, confusion matrix, F1 |
+| 13 | Hyperparameter Optimization | GridSearchCV + Optuna (Bayesian) |
+| 14 | Feature Engineering | HOG, LBP, GLCM, Color Histogram, Fusion |
+| 15 | Bias-Variance Tradeoff | CV vs Test accuracy analysis |
+| 16 | Experiment Tracking | W&B integration, CSV logging |
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Feature Extractors
 
-- **ML:** scikit-learn, PyTorch, PyTorch Lightning, timm
-- **Features:** OpenCV, scikit-image
-- **Optimization:** Optuna
-- **Visualization:** matplotlib, seaborn, Plotly
-- **Config:** Hydra
-- **Tracking:** Weights & Biases, DVC
-- **App:** Streamlit
+| Feature | Description | Dimensions |
+|---------|-------------|:----------:|
+| **Color Histogram** | HSV color distribution (32 bins/channel) | 96 |
+| **HOG** | Edge orientation histograms (8×8 cells) | ~8,100 |
+| **LBP** | Local texture patterns | ~52 |
+| **GLCM** | Texture statistics (contrast, correlation, etc.) | ~24 |
+| **Fused** | Concatenation of all above | ~8,272 |
 
 ---
 
-## 👤 Author
+## 📦 Dependencies
 
-**Vinamra Gupta** — [GitHub](https://github.com/Vinamra3215)
+```
+scikit-learn >= 1.3
+numpy
+pandas
+matplotlib
+seaborn
+h5py
+tqdm
+optuna          # Bayesian hyperparameter optimization
+wandb           # Experiment tracking (optional)
+hydra-core      # Configuration management
+```
+
+---
+
+## 🧑‍💻 Single Experiment
+
+```bash
+# Run one model on one feature type
+python scripts/run_experiment.py --model knn --features hog
+
+# With PCA reduction and W&B
+python scripts/run_experiment.py --model logistic --features fused --reducer pca --pca-components 200 --wandb
+```
+
+---
+
+## 📁 Output Structure
+
+After running the full pipeline:
+
+```
+results/
+├── metrics/
+│   ├── master_no_pca.csv           # Table 1: all models, raw features
+│   ├── master_with_pca.csv         # Table 2: all models, PCA-200
+│   ├── experiment_log.csv          # Detailed log with timestamps + params
+│   ├── comparison_no_pca.md        # Formatted markdown comparison
+│   ├── comparison_with_pca.md
+│   ├── cnn_history.json            # MLP training loss curve data
+│   ├── sweep_*.json                # Optuna sweep results
+│   ├── summary_*.txt               # Auto-generated experiment summaries
+│   └── classification_report_*.txt # Per-model classification reports
+│
+└── plots/
+    ├── model_comparison.png
+    ├── feature_comparison.png
+    ├── pca_explained_variance.png
+    ├── accuracy_vs_f1.png
+    ├── cv_vs_test_accuracy.png
+    ├── confusion_best_model.png
+    ├── runtime_comparison.png
+    └── cnn_loss_curve.png
+```
+
+---
+
+## 🔬 Key Design Decisions
+
+1. **No pretrained models**: All features are handcrafted (HOG, LBP, etc.) — no ResNet, ViT, or transfer learning. This keeps the project within classical ML / PRML scope.
+
+2. **GridSearchCV for all models**: No hyperparameter is hardcoded. Every model's parameters are discovered through cross-validated grid search, ensuring reproducible and justifiable results.
+
+3. **Two comparison tables**: Models are evaluated both with and without PCA to ensure fair comparison — you can't compare a model on 8,000-d features vs one on 200-d features.
+
+4. **KDE (Parzen Window) Classifier**: Custom implementation of density-estimation-based classification, directly implementing Bayesian decision theory from PRML course.
+
+5. **Reproducibility**: Fixed seed (42), stratified splits, cached features, detailed experiment logging.
+
+---
+
+## 📜 License
+
+MIT License — Educational Project
