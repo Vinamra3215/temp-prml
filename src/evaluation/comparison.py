@@ -1,13 +1,13 @@
 """
-Master results table builder.
+Master results table builder — supports multiple output CSVs.
 """
 import os
 import pandas as pd
 
 
-def append_result(results_dir, run_data):
-    """Append a single experiment result to master CSV."""
-    master_path = os.path.join(results_dir, "master.csv")
+def append_result(results_dir, run_data, csv_name="master.csv"):
+    """Append a single experiment result to a CSV file."""
+    master_path = os.path.join(results_dir, csv_name)
     df_new = pd.DataFrame([run_data])
     if os.path.exists(master_path):
         df_existing = pd.read_csv(master_path)
@@ -19,17 +19,17 @@ def append_result(results_dir, run_data):
     return df
 
 
-def load_master_results(results_dir):
-    """Load the master results CSV."""
-    master_path = os.path.join(results_dir, "master.csv")
+def load_master_results(results_dir, csv_name="master.csv"):
+    """Load a results CSV."""
+    master_path = os.path.join(results_dir, csv_name)
     if not os.path.exists(master_path):
         return pd.DataFrame()
     return pd.read_csv(master_path)
 
 
-def print_comparison_table(results_dir):
+def print_comparison_table(results_dir, csv_name="master.csv"):
     """Print formatted comparison table."""
-    df = load_master_results(results_dir)
+    df = load_master_results(results_dir, csv_name)
     if df.empty:
         print("No results found.")
         return
