@@ -19,3 +19,14 @@ def test_build_pipeline_with_pca():
     pipe.fit(X, y)
     preds = pipe.predict(X[:10])
     assert len(preds) == 10
+
+
+def test_build_pipeline_kde():
+    pipe = build_pipeline("kde", {"bandwidth": 1.0, "kernel": "gaussian"})
+    X = np.random.randn(100, 20)
+    y = np.random.randint(0, 3, 100)
+    pipe.fit(X, y)
+    preds = pipe.predict(X[:10])
+    assert len(preds) == 10
+    proba = pipe.predict_proba(X[:10])
+    assert proba.shape == (10, 3)

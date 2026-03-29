@@ -20,6 +20,7 @@ def main():
     dataset = Food101Dataset(root="data/", n_classes=20, seed=42)
     (train_paths, train_labels), (val_paths, val_labels), (test_paths, test_labels) = dataset.get_splits()
 
+    # Handcrafted features only — no CNN/ResNet pretrained models
     extractors = {
         "histogram": ColorHistogramExtractor(bins=32),
         "hog": HOGExtractor(),
@@ -27,14 +28,6 @@ def main():
         "glcm": GLCMExtractor(),
         "fused": FusedFeatureExtractor(),
     }
-
-    # Add CNN (works on CPU too, just slower)
-    try:
-        from src.features.cnn_embeddings import CNNEmbeddingExtractor
-        extractors["cnn"] = CNNEmbeddingExtractor(backbone="resnet50", device="cpu")
-        print("CNN extractor loaded (CPU mode)")
-    except (ImportError, OSError) as e:
-        print(f"Skipping CNN extraction: {e}")
 
     splits = {
         "train": (train_paths, train_labels),
