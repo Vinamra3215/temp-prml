@@ -162,6 +162,90 @@ Same 40 experiments with PCA dimensionality reduction applied uniformly
 
 ---
 
+## 📊 Experiment Results
+
+### Table 1: Phase 1 — No PCA (Raw Feature Dimensions)
+
+> **31 experiments** | 7 models × 5 features | GridSearchCV (Stratified 5-Fold CV) | Food-101 (20 classes)
+
+| Model         | Features   |   CV Acc |   CV F1 |   Test Acc |   Test F1 |   Time (s) |
+|:--------------|:-----------|---------:|--------:|-----------:|----------:|-----------:|
+| **mlp_sklearn**   | **histogram**  |   0.2466 |  0.2362 |     **0.2666** |    **0.2643** |      142.1 |
+| mlp_sklearn   | fused      |   0.2472 |  0.2423 |     0.2636 |    0.261  |     3199.1 |
+| logistic      | histogram  |   0.2274 |  0.2181 |     0.2386 |    0.2299 |        9.0 |
+| mlp_sklearn   | hog        |   0.2097 |  0.211  |     0.2304 |    0.2276 |     3356.2 |
+| logistic      | lbp        |   0.2211 |  0.2021 |     0.2252 |    0.2063 |        3.6 |
+| naive_bayes   | fused      |   0.2094 |  0.1935 |     0.212  |    0.1967 |       82.3 |
+| knn           | histogram  |   0.1865 |  0.1697 |     0.2052 |    0.1866 |       39.2 |
+| mlp_sklearn   | lbp        |   0.1901 |  0.1857 |     0.2024 |    0.2001 |      144.9 |
+| logistic      | glcm       |   0.1925 |  0.1816 |     0.2018 |    0.1919 |       20.2 |
+| naive_bayes   | hog        |   0.1911 |  0.1744 |     0.1924 |    0.176  |       99.2 |
+| kde           | histogram  |   0.1638 |  0.1481 |     0.1864 |    0.1665 |       92.7 |
+| mlp_sklearn   | glcm       |   0.1713 |  0.1707 |     0.1862 |    0.1858 |      160.0 |
+| kde           | lbp        |   0.1685 |  0.1422 |     0.1804 |    0.1515 |       22.5 |
+| knn           | lbp        |   0.157  |  0.1465 |     0.1706 |    0.1589 |       10.0 |
+| naive_bayes   | histogram  |   0.1671 |  0.14   |     0.1702 |    0.1429 |        0.6 |
+| decision_tree | histogram  |   0.1531 |  0.15   |     0.156  |    0.1546 |       27.1 |
+| decision_tree | fused      |   0.1446 |  0.1428 |     0.155  |    0.1455 |     4667.8 |
+| perceptron    | fused      |   0.1491 |  0.1478 |     0.155  |    0.1551 |      838.2 |
+| naive_bayes   | lbp        |   0.1367 |  0.1028 |     0.1414 |    0.1063 |        0.6 |
+| kde           | glcm       |   0.133  |  0.1123 |     0.137  |    0.1136 |       26.6 |
+| decision_tree | lbp        |   0.1231 |  0.1152 |     0.1312 |    0.1258 |        4.3 |
+| perceptron    | histogram  |   0.1173 |  0.1125 |     0.1312 |    0.1198 |        3.4 |
+| knn           | glcm       |   0.1235 |  0.1186 |     0.1308 |    0.1258 |        7.6 |
+| perceptron    | hog        |   0.1224 |  0.1211 |     0.1246 |    0.1239 |      816.6 |
+| decision_tree | glcm       |   0.1084 |  0.1012 |     0.1196 |    0.113  |        7.3 |
+| perceptron    | lbp        |   0.11   |  0.099  |     0.1194 |    0.1068 |        1.1 |
+| perceptron    | glcm       |   0.0866 |  0.0689 |     0.1064 |    0.0865 |        1.3 |
+| knn           | fused      |   0.0987 |  0.0777 |     0.1036 |    0.0834 |     4638.9 |
+| naive_bayes   | glcm       |   0.1011 |  0.054  |     0.1016 |    0.0503 |        0.5 |
+| knn           | hog        |   0.0949 |  0.0737 |     0.0958 |    0.0746 |     4662.9 |
+| decision_tree | hog        |   0.0767 |  0.0751 |     0.074  |    0.0744 |     6538.3 |
+
+> 🏆 **Phase 1 Best:** MLP on histogram — **26.66% test accuracy**
+
+---
+
+### Table 2: Phase 2 — With PCA (200 Components)
+
+> **14 experiments** | 7 models × 2 feature types (hog, fused) | PCA reduces to 200 dimensions
+> Note: histogram (192d) and GLCM (40d) skipped — fewer dimensions than PCA target
+
+| Model         | Features   |   CV Acc |   CV F1 |   Test Acc |   Test F1 |   Time (s) |
+|:--------------|:-----------|---------:|--------:|-----------:|----------:|-----------:|
+| **logistic**      | **fused**      |   0.2422 |  0.2391 |     **0.2658** |    **0.2592** |      251.8 |
+| logistic      | hog        |   0.2189 |  0.2151 |     0.2424 |    0.2373 |      245.2 |
+| mlp_sklearn   | fused      |   0.2166 |  0.2216 |     0.2406 |    0.24   |      279.9 |
+| mlp_sklearn   | hog        |   0.2035 |  0.1964 |     0.217  |    0.2156 |      346.8 |
+| naive_bayes   | fused      |   0.1871 |  0.1877 |     0.1928 |    0.1891 |      233.5 |
+| naive_bayes   | hog        |   0.1704 |  0.167  |     0.1778 |    0.1778 |      230.6 |
+| knn           | fused      |   0.1446 |  0.133  |     0.152  |    0.139  |      695.7 |
+| knn           | hog        |   0.138  |  0.1243 |     0.1428 |    0.1322 |      693.3 |
+| perceptron    | fused      |   0.1267 |  0.118  |     0.1326 |    0.1259 |      241.3 |
+| perceptron    | hog        |   0.1152 |  0.1047 |     0.1252 |    0.1167 |      236.3 |
+| decision_tree | hog        |   0.1083 |  0.1046 |     0.1194 |    0.117  |      716.2 |
+| decision_tree | fused      |   0.1062 |  0.1094 |     0.118  |    0.1138 |      722.5 |
+| kde           | fused      |   0.0742 |  0.0724 |     0.0716 |    0.0694 |      324.5 |
+| kde           | hog        |   0.0644 |  0.0695 |     0.065  |    0.0629 |      354.2 |
+
+> 🏆 **Phase 2 Best:** Logistic Regression on fused features — **26.58% test accuracy**
+
+---
+
+### Key Findings
+
+| Insight | Detail |
+|---------|--------|
+| **Best overall model** | MLP (histogram, no PCA) — 26.66% accuracy |
+| **Best with PCA** | Logistic Regression (fused, PCA-200) — 26.58% accuracy |
+| **Fastest model** | Naive Bayes — 0.5s training time |
+| **Best feature** | Color Histogram — consistently top across models |
+| **PCA effect** | Reduces fused (26,502d → 200d) with minimal accuracy loss, but ~10× speedup |
+| **Curse of dimensionality** | KNN and Decision Tree degrade significantly on high-dim HOG/fused features |
+| **KDE (Parzen)** | Works well on low-dim features (histogram: 18.6%) but struggles with PCA-reduced features |
+
+---
+
 ## 🔧 Hyperparameter Tuning
 
 **All hyperparameters are found via GridSearchCV** — nothing is hardcoded.
