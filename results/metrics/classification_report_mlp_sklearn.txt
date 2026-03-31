@@ -1,0 +1,28 @@
+Classification Report — mlp_sklearn (histogram features)
+============================================================
+                      precision    recall  f1-score   support
+
+      beef_carpaccio       0.31      0.33      0.32       250
+        beef_tartare       0.12      0.08      0.10       250
+        caesar_salad       0.37      0.43      0.40       250
+       caprese_salad       0.23      0.25      0.24       250
+         carrot_cake       0.14      0.11      0.12       250
+          cheesecake       0.18      0.14      0.16       250
+        creme_brulee       0.20      0.18      0.19       250
+       croque_madame       0.20      0.19      0.20       250
+           cup_cakes       0.20      0.18      0.19       250
+              donuts       0.22      0.24      0.23       250
+           escargots       0.18      0.18      0.18       250
+   hot_and_sour_soup       0.30      0.34      0.32       250
+           miso_soup       0.22      0.19      0.20       250
+             oysters       0.34      0.42      0.37       250
+              paella       0.28      0.30      0.29       250
+                 pho       0.43      0.52      0.47       250
+           pork_chop       0.17      0.14      0.16       250
+               ramen       0.21      0.18      0.19       250
+             sashimi       0.30      0.36      0.33       250
+strawberry_shortcake       0.30      0.34      0.32       250
+
+            accuracy                           0.25      5000
+           macro avg       0.24      0.25      0.25      5000
+        weighted avg       0.24      0.25      0.25      5000

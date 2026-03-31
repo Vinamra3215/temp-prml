@@ -22,6 +22,7 @@ import time
 import json
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 from src.utils.seed import seed_everything
 from src.utils.logging import init_wandb, log_wandb, finish_wandb, log_experiment_csv
@@ -49,7 +50,7 @@ MODELS = [
     "logistic",
     "naive_bayes",
     "decision_tree",
-    "gradient_boosting",
+    # "gradient_boosting",  # Skipped — run separately (too slow for grid search)
     "perceptron",
     "mlp_sklearn",
     "kde",
@@ -153,7 +154,7 @@ def run_phase(reducer, reducer_params, output_csv, label, use_wandb):
     print(f"  Models: {MODELS}")
     print(f"  Features: {FEATURE_TYPES}")
     print(f"  Hyperparameters: Selected via GridSearchCV (not hardcoded)")
-    print(f"{'#' * 70}")
+    print(f"{'#' * 70}", flush=True)
 
     # Clear previous
     csv_path = os.path.join(RESULTS_DIR, output_csv)
@@ -162,19 +163,21 @@ def run_phase(reducer, reducer_params, output_csv, label, use_wandb):
 
     results = []
     total = len(MODELS) * len(FEATURE_TYPES)
-    count = 0
+    combos = [(f, m) for f in FEATURE_TYPES for m in MODELS]
 
-    for feature_type in FEATURE_TYPES:
-        for model_name in MODELS:
-            count += 1
-            print(f"\n[{count}/{total}] {model_name} | {feature_type} | reducer={reducer}")
-            print("-" * 50)
-            try:
-                result = run_single(model_name, feature_type, reducer,
-                                    reducer_params, use_wandb, output_csv)
-                results.append(result)
-            except Exception as e:
-                print(f"  FAILED: {e}\n")
+    pbar = tqdm(combos, desc=label, unit="exp", ncols=100,
+                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]")
+    for feature_type, model_name in pbar:
+        pbar.set_postfix_str(f"{model_name} | {feature_type}", refresh=True)
+        print(f"\n[{pbar.n+1}/{total}] {model_name} | {feature_type} | reducer={reducer}")
+        print("-" * 50, flush=True)
+        try:
+            result = run_single(model_name, feature_type, reducer,
+                                reducer_params, use_wandb, output_csv)
+            results.append(result)
+        except Exception as e:
+            print(f"  FAILED: {e}\n", flush=True)
+    pbar.close()
 
     df = pd.DataFrame(results)
     if not df.empty:
@@ -218,7 +221,7 @@ def run_phase_cnn_loss(use_wandb):
         init_wandb(config={"type": "mlp_loss_curve", "epochs": n_epochs},
                    run_name="mlp_loss_curve", tags=["mlp", "loss_curve"])
 
-    for epoch in range(n_epochs):
+    for epoch in tqdm(range(n_epochs), desc="MLP Training", unit="epoch", ncols=80):
         mlp.max_iter = epoch + 1
         mlp.fit(X_tr, y_train)
         history["train_loss"].append(float(mlp.loss_))
@@ -231,7 +234,7 @@ def run_phase_cnn_loss(use_wandb):
             log_wandb({"epoch": epoch + 1, "train_loss": mlp.loss_, "val_loss": v_loss})
 
         if (epoch + 1) % 10 == 0:
-            print(f"  Epoch {epoch+1:3d}: train_loss={mlp.loss_:.4f}  val_loss={v_loss:.4f}")
+            print(f"  Epoch {epoch+1:3d}: train_loss={mlp.loss_:.4f}  val_loss={v_loss:.4f}", flush=True)
 
     if use_wandb:
         finish_wandb()

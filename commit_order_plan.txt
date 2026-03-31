@@ -1,232 +1,743 @@
 ================================================================================
-FOOD IMAGE CLASSIFICATION — COMMIT ORDER PLAN (150 COMMITS)
+  FOOD-101 CLASSIFICATION — 150-COMMIT ORDER PLAN
+  Project: PRML Food Image Classification (20 classes, classical ML)
 ================================================================================
-Each line: COMMIT_NUMBER | COMMIT_MESSAGE | FILES_TO_ADD
-================================================================================
 
-=== PHASE 1: PROJECT INITIALIZATION (Commits 1-8) ===
-
-001 | chore: initialize project repository | .gitignore
-002 | chore: add conda environment specification | environment.yml
-003 | chore: add project metadata and tooling config | pyproject.toml
-004 | docs: add initial README with project description | README.md
-005 | chore: add DVC pipeline definition | dvc.yaml
-006 | chore: add master Hydra config | configs/config.yaml
-007 | chore: add data config for Food-101 | configs/data/food101.yaml
-008 | feat: initialize src package structure | src/data/__init__.py, src/features/__init__.py, src/models/__init__.py, src/reduction/__init__.py, src/clustering/__init__.py, src/evaluation/__init__.py, src/experiment/__init__.py, src/visualization/__init__.py, src/utils/__init__.py, src/models/cnn/__init__.py
-
-=== PHASE 2: UTILITY MODULES (Commits 9-14) ===
-
-009 | feat(utils): add global seed setter for reproducibility | src/utils/seed.py
-010 | feat(utils): add logging and wandb initialization | src/utils/logging.py
-011 | feat(utils): add file I/O utilities | src/utils/io.py
-012 | test: add initial test structure | tests/test_features.py
-013 | test: add pipeline unit tests | tests/test_pipeline.py
-014 | test: add evaluation metrics unit tests | tests/test_metrics.py
-
-=== PHASE 3: DATA PIPELINE (Commits 15-24) ===
-
-015 | feat(data): add Food-101 dataset loader with stratified splits | src/data/dataset.py
-016 | feat(data): add image preprocessing utilities | src/data/preprocess.py
-017 | feat(data): add train transforms with augmentation | src/data/preprocess.py  [update]
-018 | feat(data): add test transforms with normalization | src/data/preprocess.py  [update]
-019 | feat(data): add HDF5 feature caching system | src/data/cache.py
-020 | feat(data): add cache existence checking | src/data/cache.py  [update]
-021 | feat(data): add class name storage in cache | src/data/cache.py  [update]
-022 | feat(data): add validation split support | src/data/dataset.py  [update]
-023 | feat(data): add class subsetting for n_classes parameter | src/data/dataset.py  [update]
-024 | refactor(data): finalize dataset with repr and len methods | src/data/dataset.py  [update]
-
-=== PHASE 4: FEATURE EXTRACTION — BASE (Commits 25-30) ===
-
-025 | feat(features): add abstract base feature extractor | src/features/base.py
-026 | feat(features): add parallel dataset extraction in base class | src/features/base.py  [update]
-027 | feat(features): add progress bar support for extraction | src/features/base.py  [update]
-028 | config: add histogram feature config | configs/features/histogram.yaml
-029 | config: add HOG feature config | configs/features/hog.yaml
-030 | config: add CNN feature config | configs/features/cnn.yaml
-
-=== PHASE 5: FEATURE EXTRACTION — COLOR HISTOGRAM (Commits 31-36) ===
-
-031 | feat(features): add RGB color histogram extractor | src/features/histogram.py
-032 | feat(features): add HSV color space support to histogram | src/features/histogram.py  [update]
-033 | feat(features): add histogram normalization | src/features/histogram.py  [update]
-034 | feat(features): add configurable bin count for histograms | src/features/histogram.py  [update]
-035 | feat(features): add multi color space support | src/features/histogram.py  [update]
-036 | test(features): add color histogram unit test | tests/test_features.py  [update]
-
-=== PHASE 6: FEATURE EXTRACTION — HOG (Commits 37-42) ===
-
-037 | feat(features): add HOG feature extractor | src/features/hog.py
-038 | feat(features): add HOG visualization method | src/features/hog.py  [update]
-039 | feat(features): add configurable HOG parameters | src/features/hog.py  [update]
-040 | feat(features): add orientations and cell size config for HOG | src/features/hog.py  [update]
-041 | test(features): add HOG extractor unit test | tests/test_features.py  [update]
-042 | docs: update feature extraction documentation | src/features/hog.py  [update]
-
-=== PHASE 7: FEATURE EXTRACTION — LBP (Commits 43-47) ===
-
-043 | feat(features): add LBP feature extractor | src/features/lbp.py
-044 | feat(features): add uniform LBP pattern support | src/features/lbp.py  [update]
-045 | feat(features): add configurable radius and points for LBP | src/features/lbp.py  [update]
-046 | test(features): add LBP extractor unit test | tests/test_features.py  [update]
-047 | docs: add LBP docstring with course topic reference | src/features/lbp.py  [update]
-
-=== PHASE 8: FEATURE EXTRACTION — GLCM (Commits 48-52) ===
-
-048 | feat(features): add GLCM texture feature extractor | src/features/glcm.py
-049 | feat(features): add multi-angle GLCM computation | src/features/glcm.py  [update]
-050 | feat(features): add configurable GLCM properties | src/features/glcm.py  [update]
-051 | feat(features): add GLCM quantization for efficiency | src/features/glcm.py  [update]
-052 | test(features): add GLCM extractor unit test | tests/test_features.py  [update]
-
-=== PHASE 9: FEATURE EXTRACTION — CNN EMBEDDINGS (Commits 53-60) ===
-
-053 | feat(features): add CNN embedding extractor skeleton | src/features/cnn_embeddings.py
-054 | feat(features): add timm backbone loading for CNN | src/features/cnn_embeddings.py  [update]
-055 | feat(features): add image transform pipeline for CNN | src/features/cnn_embeddings.py  [update]
-056 | feat(features): add single image extraction for CNN | src/features/cnn_embeddings.py  [update]
-057 | feat(features): add batched GPU extraction for CNN | src/features/cnn_embeddings.py  [update]
-058 | feat(features): add PathDataset for CNN batch loading | src/features/cnn_embeddings.py  [update]
-059 | fix(features): set num_workers=0 for Windows compatibility | src/features/cnn_embeddings.py  [update]
-060 | feat(features): add CPU fallback for CNN extractor | src/features/cnn_embeddings.py  [update]
-
-=== PHASE 10: FEATURE FUSION (Commits 61-63) ===
-
-061 | feat(features): add fused feature extractor | src/features/fusion.py
-062 | feat(features): add configurable extractor list for fusion | src/features/fusion.py  [update]
-063 | test(features): add fusion extractor unit test | tests/test_features.py  [update]
-
-=== PHASE 11: DIMENSIONALITY REDUCTION (Commits 64-72) ===
-
-064 | config: add PCA reduction config | configs/reduction/pca.yaml
-065 | config: add LDA reduction config | configs/reduction/lda.yaml
-066 | config: add none reduction config | configs/reduction/none.yaml
-067 | feat(reduction): add PCA reducer with variance analysis | src/reduction/pca_reducer.py
-068 | feat(reduction): add PCA scree plot visualization | src/reduction/pca_reducer.py  [update]
-069 | feat(reduction): add PCA 2D projection scatter plot | src/reduction/pca_reducer.py  [update]
-070 | feat(reduction): add LDA reducer wrapper | src/reduction/lda_reducer.py
-071 | feat(reduction): add LDA 2D scatter plot | src/reduction/lda_reducer.py  [update]
-072 | feat(reduction): finalize PCA/LDA with fit_transform methods | src/reduction/pca_reducer.py, src/reduction/lda_reducer.py  [update]
-
-=== PHASE 12: MODEL REGISTRY (Commits 73-80) ===
-
-073 | feat(models): add model registry skeleton | src/models/registry.py
-074 | feat(models): register KNN classifier | src/models/registry.py  [update]
-075 | feat(models): register logistic regression | src/models/registry.py  [update]
-076 | feat(models): register SVM variants (linear, rbf) | src/models/registry.py  [update]
-077 | feat(models): register tree-based models | src/models/registry.py  [update]
-078 | feat(models): register MLP and perceptron | src/models/registry.py  [update]
-079 | feat(models): add reducer registry (PCA, LDA, none) | src/models/registry.py  [update]
-080 | feat(models): add build_pipeline function (Scaler->Reducer->Clf) | src/models/registry.py  [update]
-
-=== PHASE 13: MODEL CONFIGS (Commits 81-91) ===
-
-081 | config: add kNN model config | configs/model/knn.yaml
-082 | config: add logistic regression config | configs/model/logistic.yaml
-083 | config: add naive bayes config | configs/model/naive_bayes.yaml
-084 | config: add SVM RBF config | configs/model/svm_rbf.yaml
-085 | config: add SVM linear config | configs/model/svm_linear.yaml
-086 | config: add decision tree config | configs/model/decision_tree.yaml
-087 | config: add random forest config | configs/model/random_forest.yaml
-088 | config: add gradient boosting config | configs/model/gradient_boosting.yaml
-089 | config: add perceptron config | configs/model/perceptron.yaml
-090 | config: add MLP sklearn config | configs/model/mlp_sklearn.yaml
-091 | config: add CNN model config | configs/model/cnn.yaml
-
-=== PHASE 14: CLASSICAL ML MODELS (Commits 92-97) ===
-
-092 | feat(models): add classical ML model collection | src/models/classical.py
-093 | feat(models): add kNN variants with distance metrics | src/models/classical.py  [update]
-094 | feat(models): add SVM variants (linear, rbf, poly) | src/models/classical.py  [update]
-095 | feat(models): add logistic regression with L1/L2 | src/models/classical.py  [update]
-096 | feat(models): add tree-based models (DT, RF, GB) | src/models/classical.py  [update]
-097 | test(models): add pipeline build and predict test | tests/test_pipeline.py  [update]
-
-=== PHASE 15: MLP MODEL (Commits 98-103) ===
-
-098 | feat(models): add sklearn MLP classifier | src/models/mlp.py
-099 | feat(models): add PyTorch FoodMLP architecture | src/models/mlp.py  [update]
-100 | feat(models): add MLP training loop with backpropagation | src/models/mlp.py  [update]
-101 | feat(models): add training history tracking for MLP | src/models/mlp.py  [update]
-102 | feat(models): add validation monitoring for MLP | src/models/mlp.py  [update]
-103 | feat(models): add Adam optimizer and weight decay for MLP | src/models/mlp.py  [update]
-
-=== PHASE 16: CNN MODEL (Commits 104-110) ===
-
-104 | feat(cnn): add custom FoodCNN architecture | src/models/cnn/model.py
-105 | feat(cnn): add Lightning wrapper with transfer learning | src/models/cnn/model.py  [update]
-106 | feat(cnn): add backbone freezing for fine-tuning | src/models/cnn/model.py  [update]
-107 | feat(cnn): add LR scheduler and optimizer config | src/models/cnn/model.py  [update]
-108 | feat(cnn): add Food101 Lightning DataModule | src/models/cnn/datamodule.py
-109 | feat(cnn): add data augmentation transforms | src/models/cnn/datamodule.py  [update]
-110 | feat(cnn): add early stopping callback | src/models/cnn/callbacks.py
-
-=== PHASE 17: CLUSTERING (Commits 111-117) ===
-
-111 | feat(clustering): add KMeans with evaluation metrics | src/clustering/kmeans.py
-112 | feat(clustering): add elbow method plot | src/clustering/kmeans.py  [update]
-113 | feat(clustering): add MiniBatch KMeans for large data | src/clustering/kmeans.py  [update]
-114 | feat(clustering): add agglomerative clustering | src/clustering/agglomerative.py
-115 | feat(clustering): add dendrogram visualization | src/clustering/agglomerative.py  [update]
-116 | feat(clustering): add GMM clustering with EM | src/clustering/gmm.py
-117 | feat(clustering): add BIC/AIC sweep for GMM selection | src/clustering/gmm.py  [update]
-
-=== PHASE 18: EVALUATION (Commits 118-124) ===
-
-118 | feat(eval): add classification metrics (accuracy, F1, precision, recall) | src/evaluation/metrics.py
-119 | feat(eval): add top-5 accuracy and confusion matrix | src/evaluation/metrics.py  [update]
-120 | feat(eval): add classification report generation | src/evaluation/metrics.py  [update]
-121 | feat(eval): add stratified K-fold cross-validation | src/evaluation/cross_val.py
-122 | feat(eval): add learning curve plotting | src/evaluation/cross_val.py  [update]
-123 | feat(eval): add master CSV result tracking | src/evaluation/comparison.py
-124 | test(eval): add evaluation unit test | tests/test_metrics.py  [update]
-
-=== PHASE 19: VISUALIZATION (Commits 125-133) ===
-
-125 | feat(viz): add confusion matrix heatmap | src/visualization/confusion_plot.py
-126 | feat(viz): add kNN k-vs-accuracy plot | src/visualization/learning_curves.py
-127 | feat(viz): add training history curves | src/visualization/learning_curves.py  [update]
-128 | feat(viz): add convolution filter demo (Sobel, Gabor, Laplacian) | src/visualization/filter_demo.py
-129 | feat(viz): add UMAP interactive scatter plot | src/visualization/umap_plot.py
-130 | feat(viz): add Grad-CAM CNN interpretability | src/visualization/gradcam.py
-131 | feat(viz): add SHAP feature importance analysis | src/visualization/shap_analysis.py
-132 | config: add experiment configs | configs/experiment/classifier_comparison.yaml, configs/experiment/feature_comparison.yaml, configs/experiment/reduction_comparison.yaml
-133 | config: add sweep experiment configs | configs/experiment/knn_sweep.yaml, configs/experiment/svm_sweep.yaml, configs/experiment/clustering.yaml
-
-=== PHASE 20: EXPERIMENT RUNNERS (Commits 134-140) ===
-
-134 | feat(experiment): add core experiment runner | src/experiment/runner.py
-135 | feat(experiment): add experiment logging to master CSV | src/experiment/runner.py  [update]
-136 | feat(experiment): add Optuna hyperparameter sweeper | src/experiment/sweeper.py
-137 | feat(experiment): add model-specific search spaces | src/experiment/sweeper.py  [update]
-138 | feat(experiment): add clustering experiment runner | src/experiment/clustering_runner.py
-139 | feat(experiment): add KMeans + Agglomerative + GMM in runner | src/experiment/clustering_runner.py  [update]
-140 | feat(experiment): add auto plot generation in clustering runner | src/experiment/clustering_runner.py  [update]
-
-=== PHASE 21: ENTRY-POINT SCRIPTS (Commits 141-146) ===
-
-141 | feat(scripts): add feature extraction script | scripts/extract_features.py
-142 | feat(scripts): add experiment runner CLI | scripts/run_experiment.py
-143 | feat(scripts): add hyperparameter sweep CLI | scripts/run_sweep.py
-144 | feat(scripts): add clustering experiment CLI | scripts/run_clustering.py
-145 | feat(scripts): add CNN fine-tuning script | scripts/run_cnn.py
-146 | feat(scripts): add report plot generation script | scripts/generate_report_plots.py
-
-=== PHASE 22: APP & RESULTS (Commits 147-150) ===
-
-147 | feat(app): add Streamlit food classifier demo | app/streamlit_demo.py
-148 | results: add experiment results and comparison tables | results/metrics/master.csv, results/metrics/comparison_table.csv, results/metrics/comparison_results.md, results/metrics/classification_report_logistic.txt, results/metrics/classification_report_svm_rbf.txt, results/metrics/classification_report_random_forest.txt
-149 | results: add visualization plots | results/plots/model_comparison.png, results/plots/feature_comparison.png, results/plots/accuracy_vs_f1.png, results/plots/runtime_comparison.png, results/plots/confusion_logistic.png, results/plots/confusion_svm_rbf.png, results/plots/confusion_random_forest.png, results/plots/pca_explained_variance.png, results/plots/cv_vs_test_accuracy.png
-150 | docs: update README with full results and project documentation | README.md  [update]
+INSTRUCTIONS:
+  - Commits are ordered so each builds on the previous (no broken imports)
+  - Each commit message is prefixed with a category tag
+  - Files listed under each commit should be staged together
+  - Use: git add <files> && git commit -m "<message>"
+  - Start from an empty repo (git init) or fresh branch
 
 ================================================================================
+  PHASE A: PROJECT SCAFFOLD & CONFIGURATION (Commits 1–20)
+================================================================================
+
+COMMIT 1
+  Message: "init: initialize empty project repository"
+  Files: (empty commit or .gitkeep)
+  Notes: git commit --allow-empty -m "init: initialize empty project repository"
+
+COMMIT 2
+  Message: "init: add .gitignore for Python, data, and cache files"
+  Files: .gitignore
+
+COMMIT 3
+  Message: "init: add project metadata and build configuration"
+  Files: pyproject.toml
+
+COMMIT 4
+  Message: "init: add conda environment specification"
+  Files: environment.yml
+
+COMMIT 5
+  Message: "init: add DVC pipeline configuration"
+  Files: dvc.yaml
+
+COMMIT 6
+  Message: "docs: add initial project README with overview"
+  Files: README.md
+  Notes: Add only the title, description, and project highlights table
+
+COMMIT 7
+  Message: "config: add root Hydra configuration"
+  Files: configs/config.yaml
+
+COMMIT 8
+  Message: "config: add data configuration for Food-101"
+  Files: configs/data/food101.yaml
+  Notes: Create this file if it exists, or skip if data config is inline
+
+COMMIT 9
+  Message: "config: add feature extraction configs — histogram"
+  Files: configs/features/histogram.yaml
+
+COMMIT 10
+  Message: "config: add feature extraction configs — HOG"
+  Files: configs/features/hog.yaml
+
+COMMIT 11
+  Message: "config: add feature extraction configs — CNN embeddings"
+  Files: configs/features/cnn.yaml
+
+COMMIT 12
+  Message: "config: add model config — KNN"
+  Files: configs/model/knn.yaml
+
+COMMIT 13
+  Message: "config: add model config — Logistic Regression"
+  Files: configs/model/logistic.yaml
+
+COMMIT 14
+  Message: "config: add model config — Naive Bayes"
+  Files: configs/model/naive_bayes.yaml
+
+COMMIT 15
+  Message: "config: add model config — Decision Tree"
+  Files: configs/model/decision_tree.yaml
+
+COMMIT 16
+  Message: "config: add model config — Gradient Boosting"
+  Files: configs/model/gradient_boosting.yaml
+
+COMMIT 17
+  Message: "config: add model configs — Perceptron and MLP"
+  Files: configs/model/perceptron.yaml, configs/model/mlp_sklearn.yaml
+
+COMMIT 18
+  Message: "config: add model configs — SVM (linear and RBF)"
+  Files: configs/model/svm_linear.yaml, configs/model/svm_rbf.yaml
+
+COMMIT 19
+  Message: "config: add model config — Random Forest and CNN"
+  Files: configs/model/random_forest.yaml, configs/model/cnn.yaml
+
+COMMIT 20
+  Message: "config: add dimensionality reduction configs — PCA, LDA, none"
+  Files: configs/reduction/pca.yaml, configs/reduction/lda.yaml, configs/reduction/none.yaml
+
+================================================================================
+  PHASE B: UTILITY LAYER (Commits 21–30)
+================================================================================
+
+COMMIT 21
+  Message: "feat(utils): add utils package __init__"
+  Files: src/utils/__init__.py
+
+COMMIT 22
+  Message: "feat(utils): add seed utility for reproducibility"
+  Files: src/utils/seed.py
+
+COMMIT 23
+  Message: "feat(utils): add I/O utility functions"
+  Files: src/utils/io.py
+
+COMMIT 24
+  Message: "feat(utils): add W&B integration and CSV experiment logging"
+  Files: src/utils/logging.py
+  Notes: Contains init_wandb, log_wandb, finish_wandb, log_experiment_csv
+
+COMMIT 25
+  Message: "feat(utils): add logging — CSV append and run metadata"
+  Files: src/utils/logging.py
+  Notes: If committed in commit 24, skip this or split the file into two commits
+         (first half: W&B functions, second half: CSV logging functions)
+
+COMMIT 26
+  Message: "feat(reduction): add reduction package __init__"
+  Files: src/reduction/__init__.py
+
+COMMIT 27
+  Message: "feat(reduction): add PCA reducer wrapper"
+  Files: src/reduction/pca_reducer.py
+
+COMMIT 28
+  Message: "feat(reduction): add LDA reducer wrapper"
+  Files: src/reduction/lda_reducer.py
+
+COMMIT 29
+  Message: "feat(analysis): add analysis package __init__"
+  Files: src/analysis/__init__.py
+
+COMMIT 30
+  Message: "feat(analysis): add model insights — ranking, confusion, auto-summary"
+  Files: src/analysis/model_insights.py
+
+================================================================================
+  PHASE C: DATA LAYER (Commits 31–45)
+================================================================================
+
+COMMIT 31
+  Message: "feat(data): add data package __init__"
+  Files: src/data/__init__.py
+
+COMMIT 32
+  Message: "feat(data): add image preprocessing utilities"
+  Files: src/data/preprocess.py
+
+COMMIT 33
+  Message: "feat(data): add Food101Dataset — class loading from meta files"
+  Files: src/data/dataset.py
+  Notes: Commit only the __init__, _load_classes methods first
+
+COMMIT 34
+  Message: "feat(data): add Food101Dataset — split loading from JSON"
+  Files: src/data/dataset.py
+  Notes: Add _load_split method
+
+COMMIT 35
+  Message: "feat(data): add Food101Dataset — stratified train/val/test splits"
+  Files: src/data/dataset.py
+  Notes: Add get_splits method with sklearn train_test_split
+
+COMMIT 36
+  Message: "feat(data): add Food101Dataset — __len__ and __repr__ methods"
+  Files: src/data/dataset.py
+  Notes: Complete the class with utility methods
+
+COMMIT 37
+  Message: "feat(data): add HDF5 feature cache — save_features function"
+  Files: src/data/cache.py
+  Notes: Add the save function first
+
+COMMIT 38
+  Message: "feat(data): add HDF5 feature cache — load_features function"
+  Files: src/data/cache.py
+  Notes: Add the load and cache_exists functions
+
+COMMIT 39
+  Message: "feat(data): add HDF5 feature cache — cache existence check"
+  Files: src/data/cache.py
+  Notes: Complete the caching module
+
+COMMIT 40
+  Message: "refactor(data): add docstrings to dataset and cache modules"
+  Files: src/data/dataset.py, src/data/cache.py
+
+COMMIT 41
+  Message: "feat(data): add class subsetting — deterministic n_classes selection"
+  Files: src/data/dataset.py
+  Notes: Ensure random.seed(42) + random.sample is documented
+
+COMMIT 42
+  Message: "feat(data): handle missing images gracefully in split loading"
+  Files: src/data/dataset.py
+  Notes: os.path.exists check in _load_split
+
+COMMIT 43
+  Message: "feat(data): add image path resolution for Kaggle folder layout"
+  Files: src/data/dataset.py
+  Notes: f"{img_id}.jpg" path construction
+
+COMMIT 44
+  Message: "style(data): clean up imports and formatting in data modules"
+  Files: src/data/dataset.py, src/data/cache.py, src/data/preprocess.py
+
+COMMIT 45
+  Message: "docs(data): add module-level docstrings for data package"
+  Files: src/data/dataset.py, src/data/cache.py
+
+================================================================================
+  PHASE D: FEATURE EXTRACTION LAYER (Commits 46–75)
+================================================================================
+
+COMMIT 46
+  Message: "feat(features): add features package __init__"
+  Files: src/features/__init__.py
+
+COMMIT 47
+  Message: "feat(features): add base FeatureExtractor abstract class"
+  Files: src/features/base.py
+  Notes: Abstract class with extract_single and extract_dataset methods
+
+COMMIT 48
+  Message: "feat(features): add parallel extraction in base class"
+  Files: src/features/base.py
+  Notes: extract_dataset with tqdm progress bar
+
+COMMIT 49
+  Message: "feat(features): add error handling in base extractor"
+  Files: src/features/base.py
+  Notes: try/except around single image extraction with zero-fill fallback
+
+COMMIT 50
+  Message: "feat(features): add Color Histogram extractor — HSV conversion"
+  Files: src/features/histogram.py
+  Notes: Add class skeleton + __init__ with bins parameter
+
+COMMIT 51
+  Message: "feat(features): add Color Histogram extractor — feature computation"
+  Files: src/features/histogram.py
+  Notes: Add extract_single method — cv2 calcHist per channel
+
+COMMIT 52
+  Message: "feat(features): add Color Histogram extractor — normalization"
+  Files: src/features/histogram.py
+  Notes: L2 normalization of histogram vector
+
+COMMIT 53
+  Message: "feat(features): add HOG extractor — initialization"
+  Files: src/features/hog.py
+  Notes: Add class with parameters (orientations, pixels_per_cell, cells_per_block)
+
+COMMIT 54
+  Message: "feat(features): add HOG extractor — skimage feature computation"
+  Files: src/features/hog.py
+  Notes: Add extract_single using skimage.feature.hog
+
+COMMIT 55
+  Message: "feat(features): add LBP extractor — initialization"
+  Files: src/features/lbp.py
+  Notes: Add class with radius and n_points parameters
+
+COMMIT 56
+  Message: "feat(features): add LBP extractor — histogram computation"
+  Files: src/features/lbp.py
+  Notes: extract_single using skimage.feature.local_binary_pattern + histogram
+
+COMMIT 57
+  Message: "feat(features): add GLCM extractor — initialization"
+  Files: src/features/glcm.py
+  Notes: Add class with distances and angles parameters
+
+COMMIT 58
+  Message: "feat(features): add GLCM extractor — texture property computation"
+  Files: src/features/glcm.py
+  Notes: extract_single: graycomatrix + graycoprops (contrast, correlation, etc.)
+
+COMMIT 59
+  Message: "feat(features): add GLCM extractor — multi-distance/angle aggregation"
+  Files: src/features/glcm.py
+  Notes: Flatten properties across distances and angles
+
+COMMIT 60
+  Message: "feat(features): add Fused Feature extractor — multi-feature concatenation"
+  Files: src/features/fusion.py
+  Notes: Combines histogram, HOG, LBP, GLCM into single vector
+
+COMMIT 61
+  Message: "feat(features): add CNN Embeddings extractor — ResNet backbone"
+  Files: src/features/cnn_embeddings.py
+  Notes: Add class using torchvision ResNet for feature extraction
+
+COMMIT 62
+  Message: "feat(features): add CNN Embeddings — GPU/CPU device handling"
+  Files: src/features/cnn_embeddings.py
+  Notes: torch.device selection and model.eval()
+
+COMMIT 63
+  Message: "feat(features): add CNN Embeddings — image preprocessing pipeline"
+  Files: src/features/cnn_embeddings.py
+  Notes: torchvision transforms (resize, normalize)
+
+COMMIT 64
+  Message: "feat(features): add CNN Embeddings — batch feature extraction"
+  Files: src/features/cnn_embeddings.py
+  Notes: Forward pass through ResNet, extract penultimate layer
+
+COMMIT 65
+  Message: "refactor(features): standardize output dimensions across all extractors"
+  Files: src/features/histogram.py, src/features/hog.py, src/features/lbp.py, src/features/glcm.py
+
+COMMIT 66
+  Message: "style(features): add type hints to all feature extractors"
+  Files: src/features/base.py, src/features/histogram.py, src/features/hog.py
+
+COMMIT 67
+  Message: "style(features): add type hints to remaining extractors"
+  Files: src/features/lbp.py, src/features/glcm.py, src/features/fusion.py
+
+COMMIT 68
+  Message: "docs(features): add docstrings to Color Histogram extractor"
+  Files: src/features/histogram.py
+
+COMMIT 69
+  Message: "docs(features): add docstrings to HOG extractor"
+  Files: src/features/hog.py
+
+COMMIT 70
+  Message: "docs(features): add docstrings to LBP and GLCM extractors"
+  Files: src/features/lbp.py, src/features/glcm.py
+
+COMMIT 71
+  Message: "docs(features): add docstrings to Fusion and CNN extractors"
+  Files: src/features/fusion.py, src/features/cnn_embeddings.py
+
+COMMIT 72
+  Message: "refactor(features): move image loading to preprocess module"
+  Files: src/features/base.py, src/data/preprocess.py
+
+COMMIT 73
+  Message: "feat(features): add feature dimension constants"
+  Files: src/features/__init__.py
+  Notes: FEATURE_DIMS = {"histogram": 96, "hog": ~8100, ...}
+
+COMMIT 74
+  Message: "perf(features): optimize HOG extraction with grayscale conversion"
+  Files: src/features/hog.py
+
+COMMIT 75
+  Message: "style(features): clean up imports across feature extraction modules"
+  Files: src/features/base.py, src/features/histogram.py, src/features/hog.py, src/features/lbp.py
+
+================================================================================
+  PHASE E: MODELS & CLASSIFIERS (Commits 76–100)
+================================================================================
+
+COMMIT 76
+  Message: "feat(models): add models package __init__"
+  Files: src/models/__init__.py
+
+COMMIT 77
+  Message: "feat(models): add KDE (Parzen Window) classifier — initialization"
+  Files: src/models/classical.py
+  Notes: KDEClassifier class with bandwidth and kernel params
+
+COMMIT 78
+  Message: "feat(models): add KDE classifier — per-class density estimation"
+  Files: src/models/classical.py
+  Notes: fit() method: fit KernelDensity per class
+
+COMMIT 79
+  Message: "feat(models): add KDE classifier — Bayesian prediction"
+  Files: src/models/classical.py
+  Notes: predict() and predict_proba() using log-likelihoods + priors
+
+COMMIT 80
+  Message: "feat(models): add KDE classifier — sklearn-compatible interface"
+  Files: src/models/classical.py
+  Notes: score(), get_params(), set_params() for GridSearchCV compatibility
+
+COMMIT 81
+  Message: "feat(models): add model registry — MODEL_REGISTRY dict"
+  Files: src/models/registry.py
+  Notes: Map model names to sklearn classes
+
+COMMIT 82
+  Message: "feat(models): add model registry — REDUCER_REGISTRY dict"
+  Files: src/models/registry.py
+  Notes: Map reducer names (pca, lda, none) to sklearn classes
+
+COMMIT 83
+  Message: "feat(models): add GridSearchCV parameter grids — KNN"
+  Files: src/models/registry.py
+  Notes: PARAM_GRIDS["knn"] with n_neighbors, weights, metric
+
+COMMIT 84
+  Message: "feat(models): add GridSearchCV parameter grids — Logistic Regression"
+  Files: src/models/registry.py
+  Notes: PARAM_GRIDS["logistic"] with C, solver
+
+COMMIT 85
+  Message: "feat(models): add GridSearchCV parameter grids — Naive Bayes and Decision Tree"
+  Files: src/models/registry.py
+
+COMMIT 86
+  Message: "feat(models): add GridSearchCV parameter grids — Gradient Boosting"
+  Files: src/models/registry.py
+  Notes: n_estimators, max_depth, learning_rate
+
+COMMIT 87
+  Message: "feat(models): add GridSearchCV parameter grids — MLP and Perceptron"
+  Files: src/models/registry.py
+
+COMMIT 88
+  Message: "feat(models): add GridSearchCV parameter grids — SGD and KDE"
+  Files: src/models/registry.py
+
+COMMIT 89
+  Message: "feat(models): add build_pipeline function — StandardScaler + Classifier"
+  Files: src/models/registry.py
+  Notes: Pipeline construction with optional reducer step
+
+COMMIT 90
+  Message: "feat(models): add build_pipeline — optional PCA/LDA reducer step"
+  Files: src/models/registry.py
+  Notes: Conditional reducer insertion between scaler and classifier
+
+COMMIT 91
+  Message: "feat(models): add get_param_grid helper function"
+  Files: src/models/registry.py
+
+COMMIT 92
+  Message: "feat(models): add custom MLP model wrapper"
+  Files: src/models/mlp.py
+
+COMMIT 93
+  Message: "feat(models): add CNN model package __init__"
+  Files: src/models/cnn/__init__.py
+
+COMMIT 94
+  Message: "feat(models): add CNN model architecture"
+  Files: src/models/cnn/model.py
+
+COMMIT 95
+  Message: "feat(models): add CNN data module for PyTorch Lightning"
+  Files: src/models/cnn/datamodule.py
+
+COMMIT 96
+  Message: "feat(models): add CNN training callbacks"
+  Files: src/models/cnn/callbacks.py
+
+COMMIT 97
+  Message: "docs(models): add docstrings to KDE classifier"
+  Files: src/models/classical.py
+
+COMMIT 98
+  Message: "docs(models): add docstrings to model registry"
+  Files: src/models/registry.py
+
+COMMIT 99
+  Message: "refactor(models): ensure all param grids use clf__ prefix for Pipeline"
+  Files: src/models/registry.py
+
+COMMIT 100
+  Message: "style(models): clean up imports and formatting in model modules"
+  Files: src/models/classical.py, src/models/registry.py, src/models/mlp.py
+
+================================================================================
+  PHASE F: EVALUATION LAYER (Commits 101–112)
+================================================================================
+
+COMMIT 101
+  Message: "feat(eval): add evaluation package __init__"
+  Files: src/evaluation/__init__.py
+
+COMMIT 102
+  Message: "feat(eval): add metrics — accuracy, F1, precision, recall"
+  Files: src/evaluation/metrics.py
+  Notes: evaluate() function returning dict of metrics
+
+COMMIT 103
+  Message: "feat(eval): add metrics — classification report and prediction output"
+  Files: src/evaluation/metrics.py
+  Notes: get_classification_report(), y_pred and y_prob return
+
+COMMIT 104
+  Message: "feat(eval): add stratified K-Fold cross-validation"
+  Files: src/evaluation/cross_val.py
+  Notes: stratified_cv function with configurable k folds
+
+COMMIT 105
+  Message: "feat(eval): add cross-validation — multi-metric scoring"
+  Files: src/evaluation/cross_val.py
+  Notes: Return accuracy, f1_macro, precision, recall per fold
+
+COMMIT 106
+  Message: "feat(eval): add result comparison — CSV append utility"
+  Files: src/evaluation/comparison.py
+  Notes: append_result function for master CSV building
+
+COMMIT 107
+  Message: "feat(eval): add result comparison — markdown table generation"
+  Files: src/evaluation/comparison.py
+
+COMMIT 108
+  Message: "docs(eval): add docstrings to metrics module"
+  Files: src/evaluation/metrics.py
+
+COMMIT 109
+  Message: "docs(eval): add docstrings to cross_val and comparison modules"
+  Files: src/evaluation/cross_val.py, src/evaluation/comparison.py
+
+COMMIT 110
+  Message: "feat(analysis): add model ranking function"
+  Files: src/analysis/model_insights.py
+  Notes: print_model_ranking sorted by test_accuracy
+
+COMMIT 111
+  Message: "feat(analysis): add auto-summary generation"
+  Files: src/analysis/model_insights.py
+  Notes: generate_auto_summary with best model, feature analysis
+
+COMMIT 112
+  Message: "feat(analysis): add confusion matrix analysis utilities"
+  Files: src/analysis/model_insights.py
+
+================================================================================
+  PHASE G: EXPERIMENT RUNNERS (Commits 113–125)
+================================================================================
+
+COMMIT 113
+  Message: "feat(experiment): add experiment package __init__"
+  Files: src/experiment/__init__.py
+
+COMMIT 114
+  Message: "feat(experiment): add core experiment runner — single run function"
+  Files: src/experiment/runner.py
+  Notes: run_experiment with model building, training, evaluation
+
+COMMIT 115
+  Message: "feat(experiment): add experiment runner — GridSearchCV integration"
+  Files: src/experiment/runner.py
+  Notes: Hyperparameter search with cross-validation
+
+COMMIT 116
+  Message: "feat(experiment): add experiment runner — W&B logging integration"
+  Files: src/experiment/runner.py
+
+COMMIT 117
+  Message: "feat(experiment): add experiment runner — result saving and CSV output"
+  Files: src/experiment/runner.py
+
+COMMIT 118
+  Message: "feat(experiment): add Optuna sweeper — objective function"
+  Files: src/experiment/sweeper.py
+  Notes: Per-model search space definitions
+
+COMMIT 119
+  Message: "feat(experiment): add Optuna sweeper — TPE sampler and study creation"
+  Files: src/experiment/sweeper.py
+
+COMMIT 120
+  Message: "feat(experiment): add Optuna sweeper — result saving and best params"
+  Files: src/experiment/sweeper.py
+
+COMMIT 121
+  Message: "feat(experiment): add clustering runner"
+  Files: src/experiment/clustering_runner.py
+
+COMMIT 122
+  Message: "feat(clustering): add clustering package __init__"
+  Files: src/clustering/__init__.py
+
+COMMIT 123
+  Message: "feat(clustering): add K-Means clustering"
+  Files: src/clustering/kmeans.py
+
+COMMIT 124
+  Message: "feat(clustering): add GMM clustering"
+  Files: src/clustering/gmm.py
+
+COMMIT 125
+  Message: "feat(clustering): add Agglomerative clustering"
+  Files: src/clustering/agglomerative.py
+
+================================================================================
+  PHASE H: VISUALIZATION (Commits 126–133)
+================================================================================
+
+COMMIT 126
+  Message: "feat(viz): add visualization package __init__"
+  Files: src/visualization/__init__.py
+
+COMMIT 127
+  Message: "feat(viz): add confusion matrix plotting utilities"
+  Files: src/visualization/confusion_plot.py
+
+COMMIT 128
+  Message: "feat(viz): add learning curves plotting"
+  Files: src/visualization/learning_curves.py
+
+COMMIT 129
+  Message: "feat(viz): add UMAP dimensionality reduction plot"
+  Files: src/visualization/umap_plot.py
+
+COMMIT 130
+  Message: "feat(viz): add SHAP analysis visualization"
+  Files: src/visualization/shap_analysis.py
+
+COMMIT 131
+  Message: "feat(viz): add GradCAM visualization for CNN models"
+  Files: src/visualization/gradcam.py
+
+COMMIT 132
+  Message: "feat(viz): add filter/kernel visualization demo"
+  Files: src/visualization/filter_demo.py
+
+COMMIT 133
+  Message: "config: add experiment sweep configs — classifier and feature comparison"
+  Files: configs/experiment/classifier_comparison.yaml, configs/experiment/feature_comparison.yaml
+
+================================================================================
+  PHASE I: ENTRY-POINT SCRIPTS (Commits 134–142)
+================================================================================
+
+COMMIT 134
+  Message: "config: add experiment sweep configs — KNN, SVM, reduction, clustering"
+  Files: configs/experiment/knn_sweep.yaml, configs/experiment/svm_sweep.yaml,
+         configs/experiment/reduction_comparison.yaml, configs/experiment/clustering.yaml
+
+COMMIT 135
+  Message: "feat(scripts): add feature extraction entry point"
+  Files: scripts/extract_features.py
+
+COMMIT 136
+  Message: "feat(scripts): add single experiment runner CLI"
+  Files: scripts/run_experiment.py
+
+COMMIT 137
+  Message: "feat(scripts): add full experiment pipeline — Phase 1 (No PCA)"
+  Files: scripts/run_all_experiments.py
+  Notes: Commit the configuration, imports, and Phase 1 runner
+
+COMMIT 138
+  Message: "feat(scripts): add full experiment pipeline — Phase 2 (PCA-200)"
+  Files: scripts/run_all_experiments.py
+  Notes: Add Phase 2 with PCA reducer
+
+COMMIT 139
+  Message: "feat(scripts): add full experiment pipeline — Phase 3 (MLP loss curve)"
+  Files: scripts/run_all_experiments.py
+  Notes: Add MLP training loop with epoch-wise loss recording
+
+COMMIT 140
+  Message: "feat(scripts): add full experiment pipeline — Phase 4 (auto-summary) and main()"
+  Files: scripts/run_all_experiments.py
+  Notes: Add summary generation and CLI argument parsing
+
+COMMIT 141
+  Message: "feat(scripts): add Optuna hyperparameter sweep CLI"
+  Files: scripts/run_sweep.py
+
+COMMIT 142
+  Message: "feat(scripts): add clustering analysis CLI"
+  Files: scripts/run_clustering.py
+
+================================================================================
+  PHASE J: REPORT PLOTS & PRESENTATION (Commits 143–147)
+================================================================================
+
+COMMIT 143
+  Message: "feat(scripts): add report plot generation — model and feature comparison"
+  Files: scripts/generate_report_plots.py
+  Notes: Plots 1-2: model_comparison.png, feature_comparison.png
+
+COMMIT 144
+  Message: "feat(scripts): add report plots — PCA variance, accuracy-F1, CV-vs-test"
+  Files: scripts/generate_report_plots.py
+  Notes: Plots 3-5: pca_explained_variance, accuracy_vs_f1, cv_vs_test_accuracy
+
+COMMIT 145
+  Message: "feat(scripts): add report plots — confusion matrix, runtime, loss curve"
+  Files: scripts/generate_report_plots.py
+  Notes: Plots 6-8: confusion_best_model, runtime_comparison, cnn_loss_curve
+
+COMMIT 146
+  Message: "feat(scripts): add report plots — comparison table export (CSV + Markdown)"
+  Files: scripts/generate_report_plots.py
+  Notes: save_comparison_table function and cleanup logic
+
+COMMIT 147
+  Message: "feat(scripts): add CNN training script"
+  Files: scripts/run_cnn.py
+
+================================================================================
+  PHASE K: TESTS & APP (Commits 148–150)
+================================================================================
+
+COMMIT 148
+  Message: "test: add unit tests for feature extractors"
+  Files: tests/test_features.py
+
+COMMIT 149
+  Message: "test: add unit tests for evaluation metrics and pipeline integration"
+  Files: tests/test_metrics.py, tests/test_pipeline.py
+
+COMMIT 150
+  Message: "feat(app): add Streamlit demo application for interactive classification"
+  Files: app/streamlit_demo.py
+
+================================================================================
+  POST-COMMIT CHECKLIST
+================================================================================
+
+After all 150 commits:
+  1. Verify build: conda env create -f environment.yml
+  2. Run tests: python -m pytest tests/
+  3. Run pipeline: python scripts/extract_features.py && python scripts/run_all_experiments.py
+  4. Push to GitHub: git remote add origin <url> && git push -u origin main
+
 NOTES:
+  - Commits 25, 33-36 show incremental building of a single file across commits.
+    To achieve this, add partial content first, then expand in later commits.
+  - For commits modifying the same file, ensure each commit is a logical unit.
+  - data/ and results/ directories are in .gitignore — only code is committed.
+  - If a commit feels too small, merge it with the next related one.
+  - If a commit feels too large, split the file edits into smaller logical pieces.
+
 ================================================================================
-- "[update]" means modify/expand the file (amend or add new content to it)
-- For updates, add the incremental changes to the file, not the full file
-- Commits follow conventional commit format (feat/fix/chore/docs/test/config)
-- Total: 150 commits across 22 phases
-- Phase order mirrors actual ML project development workflow:
-    Setup → Data → Features → Reduction → Models → Eval → Viz → Experiments → Results
+  TOTAL: 150 COMMITS
+  Estimated time to execute: 2-3 hours (manual) or scriptable with git automation
 ================================================================================

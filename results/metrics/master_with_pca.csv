@@ -1,0 +1,2 @@
+run_id,model,feature,reducer,cv_accuracy,cv_f1,test_accuracy,test_f1,time_seconds
+knn_hog_pca,knn,hog,pca,0.138,0.1243,0.1428,0.1322,693.33

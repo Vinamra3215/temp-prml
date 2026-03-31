@@ -14,10 +14,7 @@ build/
 env/
 
 # Data (large files)
-data/food-101/
-data/images/
-data/meta/
-data/cache/
+data/
 *.h5
 *.hdf5
 *.tar.gz
@@ -45,6 +42,9 @@ wandb/
 slurm-*.out
 *.slurm
 slurm/
+results/slurm_*
+*.err
 
 # Misc
 *.log
+download_data.py

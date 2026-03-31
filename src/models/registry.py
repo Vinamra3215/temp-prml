@@ -45,7 +45,7 @@ REDUCER_REGISTRY = {
 
 PARAM_GRIDS = {
     "knn": {
-        "clf__n_neighbors": [1, 3, 5, 7, 9, 11, 15, 21],
+        "clf__n_neighbors": [3, 7, 11, 21],
         "clf__weights": ["uniform", "distance"],
         "clf__metric": ["euclidean", "manhattan"],
     },
@@ -53,30 +53,29 @@ PARAM_GRIDS = {
         "clf__C": [0.01, 0.1, 1.0, 10.0],
         "clf__solver": ["lbfgs"],
         "clf__max_iter": [2000],
-        "clf__multi_class": ["multinomial"],
     },
     "naive_bayes": {
         "clf__var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6],
     },
     "decision_tree": {
-        "clf__max_depth": [5, 10, 20, 30, None],
-        "clf__min_samples_split": [2, 5, 10],
-        "clf__min_samples_leaf": [1, 2, 5],
+        "clf__max_depth": [5, 10, 20, None],
+        "clf__min_samples_split": [2, 10],
+        "clf__min_samples_leaf": [1, 5],
     },
     "gradient_boosting": {
-        "clf__n_estimators": [50, 100, 200],
-        "clf__max_depth": [3, 5, 7],
-        "clf__learning_rate": [0.01, 0.1, 0.2],
+        "clf__n_estimators": [50, 100],
+        "clf__max_depth": [3, 5],
+        "clf__learning_rate": [0.05, 0.1],
     },
     "mlp_sklearn": {
-        "clf__hidden_layer_sizes": [(128,), (256, 128), (512, 256, 128)],
-        "clf__activation": ["relu", "tanh"],
+        "clf__hidden_layer_sizes": [(256, 128), (512, 256, 128)],
+        "clf__activation": ["relu"],
         "clf__learning_rate_init": [0.001, 0.01],
     },
     "perceptron": {
-        "clf__penalty": [None, "l2", "l1"],
-        "clf__alpha": [0.0001, 0.001, 0.01],
-        "clf__max_iter": [500, 1000],
+        "clf__penalty": [None, "l2"],
+        "clf__alpha": [0.0001, 0.001],
+        "clf__max_iter": [1000],
     },
     "sgd": {
         "clf__loss": ["hinge", "modified_huber"],
@@ -84,8 +83,8 @@ PARAM_GRIDS = {
         "clf__max_iter": [1000],
     },
     "kde": {
-        "clf__bandwidth": [0.1, 0.5, 1.0, 2.0, 5.0],
-        "clf__kernel": ["gaussian", "tophat", "epanechnikov"],
+        "clf__bandwidth": [0.5, 1.0, 2.0],
+        "clf__kernel": ["gaussian", "tophat"],
     },
 }
 
