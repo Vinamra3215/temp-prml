@@ -1,2 +1,15 @@
 run_id,model,feature,reducer,cv_accuracy,cv_f1,test_accuracy,test_f1,time_seconds
 knn_hog_pca,knn,hog,pca,0.138,0.1243,0.1428,0.1322,693.33
+logistic_hog_pca,logistic,hog,pca,0.2189,0.2151,0.2424,0.2373,245.22
+naive_bayes_hog_pca,naive_bayes,hog,pca,0.1704,0.167,0.1778,0.1778,230.58
+decision_tree_hog_pca,decision_tree,hog,pca,0.1083,0.1046,0.1194,0.117,716.19
+perceptron_hog_pca,perceptron,hog,pca,0.1152,0.1047,0.1252,0.1167,236.3
+mlp_sklearn_hog_pca,mlp_sklearn,hog,pca,0.2035,0.1964,0.217,0.2156,346.79
+kde_hog_pca,kde,hog,pca,0.0644,0.0695,0.065,0.0629,354.22
+knn_fused_pca,knn,fused,pca,0.1446,0.133,0.152,0.139,695.72
+logistic_fused_pca,logistic,fused,pca,0.2422,0.2391,0.2658,0.2592,251.75
+naive_bayes_fused_pca,naive_bayes,fused,pca,0.1871,0.1877,0.1928,0.1891,233.47
+decision_tree_fused_pca,decision_tree,fused,pca,0.1062,0.1094,0.118,0.1138,722.45
+perceptron_fused_pca,perceptron,fused,pca,0.1267,0.118,0.1326,0.1259,241.3
+mlp_sklearn_fused_pca,mlp_sklearn,fused,pca,0.2166,0.2216,0.2406,0.24,279.87
+kde_fused_pca,kde,fused,pca,0.0742,0.0724,0.0716,0.0694,324.49

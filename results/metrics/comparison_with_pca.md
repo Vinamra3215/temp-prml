@@ -1,0 +1,25 @@
+# Table 2: Model Comparison — With PCA (200 Components)
+
+**Dataset:** Food-101 (20 classes)
+**Cross-validation:** Stratified 5-Fold
+
+
+| Model         | Features   |   CV Acc |   CV F1 |   Test Acc |   Test F1 |   Time (s) |
+|:--------------|:-----------|---------:|--------:|-----------:|----------:|-----------:|
+| logistic      | fused      |   0.2422 |  0.2391 |     0.2658 |    0.2592 |      251.8 |
+| logistic      | hog        |   0.2189 |  0.2151 |     0.2424 |    0.2373 |      245.2 |
+| mlp_sklearn   | fused      |   0.2166 |  0.2216 |     0.2406 |    0.24   |      279.9 |
+| mlp_sklearn   | hog        |   0.2035 |  0.1964 |     0.217  |    0.2156 |      346.8 |
+| naive_bayes   | fused      |   0.1871 |  0.1877 |     0.1928 |    0.1891 |      233.5 |
+| naive_bayes   | hog        |   0.1704 |  0.167  |     0.1778 |    0.1778 |      230.6 |
+| knn           | fused      |   0.1446 |  0.133  |     0.152  |    0.139  |      695.7 |
+| knn           | hog        |   0.138  |  0.1243 |     0.1428 |    0.1322 |      693.3 |
+| perceptron    | fused      |   0.1267 |  0.118  |     0.1326 |    0.1259 |      241.3 |
+| perceptron    | hog        |   0.1152 |  0.1047 |     0.1252 |    0.1167 |      236.3 |
+| decision_tree | hog        |   0.1083 |  0.1046 |     0.1194 |    0.117  |      716.2 |
+| decision_tree | fused      |   0.1062 |  0.1094 |     0.118  |    0.1138 |      722.5 |
+| kde           | fused      |   0.0742 |  0.0724 |     0.0716 |    0.0694 |      324.5 |
+| kde           | hog        |   0.0644 |  0.0695 |     0.065  |    0.0629 |      354.2 |
+
+
+**Best:** logistic on fused — 26.58% accuracy
